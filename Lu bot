@@ -1,26 +1,24 @@
 import asyncio
 from aiogram import Bot, Dispatcher, types
 from aiogram.enums import ParseMode
-from aiogram.types import Message, ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardMarkup, InlineKeyboardButton
+from aiogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
 from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram.filters import CommandStart
-from aiogram.types import CallbackQuery
-from aiogram.utils.markdown import hbold
 from aiogram.client.default import DefaultBotProperties
 
 import os
+from dotenv import load_dotenv
+load_dotenv()  # Загружаем переменные из .env файла
+
 API_TOKEN = os.getenv("BOT_TOKEN")
 
-# Создаём бота с правильными настройками
 bot = Bot(
     token=API_TOKEN,
     default=DefaultBotProperties(parse_mode=ParseMode.HTML)
 )
 
-# Хранилище и диспетчер
 dp = Dispatcher(storage=MemoryStorage())
 
-# Обработка команды /start
 @dp.message(CommandStart())
 async def start_handler(message: Message):
     start_message = (
@@ -39,7 +37,6 @@ async def start_handler(message: Message):
     
     await message.answer(start_message, reply_markup=markup)
 
-# Обработка нажатия inline кнопки "давай заглянем внутрь"
 @dp.callback_query(lambda callback: callback.data == "start_deep")
 async def handle_deep_dive(callback: CallbackQuery):
     text = (
@@ -76,7 +73,6 @@ async def handle_deep_dive(callback: CallbackQuery):
     await callback.message.answer(text, reply_markup=keyboard)
     await callback.answer()
 
-# Обработка callback для "направь меня в первый поток"
 @dp.callback_query(lambda callback: callback.data == "first_stream")
 async def handle_yes(callback: CallbackQuery):
     text = (
@@ -88,7 +84,6 @@ async def handle_yes(callback: CallbackQuery):
     await callback.message.answer(text, parse_mode="Markdown")
     await callback.answer()
 
-# Обработка callback для "я пока останусь здесь"
 @dp.callback_query(lambda callback: callback.data == "stay_here")
 async def handle_no(callback: CallbackQuery):
     text = (
@@ -101,5 +96,13 @@ async def handle_no(callback: CallbackQuery):
     await callback.message.answer(text)
     await callback.answer()
 
-# Главная функция запуска
+# ——— ЗАПУСК БОТА НА RENDER ———
+
 async def main():
+    await dp.start_polling(bot)
+
+if __name__ == "__main__":
+    try:
+        asyncio.run(main())
+    except (KeyboardInterrupt, SystemExit):
+        print("Лу выключен.")
