@@ -1,14 +1,11 @@
 import asyncio
+import os
 from aiogram import Bot, Dispatcher, types
 from aiogram.enums import ParseMode
 from aiogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
 from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram.filters import CommandStart
 from aiogram.client.default import DefaultBotProperties
-
-import os
-from dotenv import load_dotenv
-load_dotenv()  # Загружаем переменные из .env файла
 
 API_TOKEN = os.getenv("BOT_TOKEN")
 
@@ -30,11 +27,9 @@ async def start_handler(message: Message):
         "Милая Душа, позволь мне рассказать,\n"
         "что хранит для тебя это пространство."
     )
-    
     markup = InlineKeyboardMarkup(
         inline_keyboard=[[InlineKeyboardButton(text="🌘 давай заглянем внутрь", callback_data="start_deep")]]
     )
-    
     await message.answer(start_message, reply_markup=markup)
 
 @dp.callback_query(lambda callback: callback.data == "start_deep")
@@ -62,14 +57,12 @@ async def handle_deep_dive(callback: CallbackQuery):
         "И доверие Ви уже с тобой.\n\n"
         "— куда ты чувствуешь идти?"
     )
-
     keyboard = InlineKeyboardMarkup(
         inline_keyboard=[
             [InlineKeyboardButton(text="💠 направь меня в первый поток", callback_data="first_stream")],
             [InlineKeyboardButton(text="🕊 я пока останусь здесь", callback_data="stay_here")]
         ]
     )
-
     await callback.message.answer(text, reply_markup=keyboard)
     await callback.answer()
 
@@ -96,13 +89,8 @@ async def handle_no(callback: CallbackQuery):
     await callback.message.answer(text)
     await callback.answer()
 
-# ——— ЗАПУСК БОТА НА RENDER ———
-
 async def main():
     await dp.start_polling(bot)
 
 if __name__ == "__main__":
-    try:
-        asyncio.run(main())
-    except (KeyboardInterrupt, SystemExit):
-        print("Лу выключен.")
+    asyncio.run(main())
