@@ -8,7 +8,8 @@ from aiogram.types import CallbackQuery
 from aiogram.utils.markdown import hbold
 from aiogram.client.default import DefaultBotProperties
 
-API_TOKEN = "7804744962:AAG9y2a2lHqKsiQtlNO-FChwODJ-8ICvDk4"
+import os
+API_TOKEN = os.getenv("BOT_TOKEN")
 
 # Создаём бота с правильными настройками
 bot = Bot(
